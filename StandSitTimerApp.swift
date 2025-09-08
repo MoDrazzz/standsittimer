@@ -1,13 +1,17 @@
 import Cocoa
 
+// Time in minutes
+let STAND_DURATION_MINUTES: TimeInterval = 30
+let SIT_DURATION_MINUTES: TimeInterval = 60
+
 class AppDelegate: NSObject, NSApplicationDelegate {
     var statusItem: NSStatusItem!
     var timer: Timer?
     var isStanding = true
     var lastChange = Date()
     
-    let standDuration: TimeInterval = 30 * 60 // 30 min
-    let sitDuration: TimeInterval = 60 * 60  // 60 min
+    let standDuration: TimeInterval = STAND_DURATION_MINUTES * 60 // Convert minutes to seconds
+    let sitDuration: TimeInterval = SIT_DURATION_MINUTES * 60   // Convert minutes to seconds
     
     // Menu items
     let timeRemainingItem = NSMenuItem(title: "Time Remaining: --", action: nil, keyEquivalent: "")
