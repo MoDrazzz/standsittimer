@@ -1,0 +1,7 @@
+{
+  "name": "standsittimer",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "xcrun swiftc StandSitTimerApp.swift -o StandSitTimer.app/Contents/MacOS/StandSitTimer -sdk $(xcrun --show-sdk-path --sdk macosx) -framework Cocoa"
+  }
+}
