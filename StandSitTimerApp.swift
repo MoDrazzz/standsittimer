@@ -10,15 +10,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let sitDuration: TimeInterval = 60 * 60  // 60 min
     
     // Menu items
-    let timeRemainingItem = NSMenuItem(title: "Time Remaining: --:--", action: nil, keyEquivalent: "")
+    let timeRemainingItem = NSMenuItem(title: "Time Remaining: --", action: nil, keyEquivalent: "")
     let quitItem = NSMenuItem(title: "Quit", action: #selector(quitApp), keyEquivalent: "q")
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Menu bar icon
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         updateIcon()
         
-        // Menu
         let menu = NSMenu()
         menu.addItem(timeRemainingItem)
         menu.addItem(NSMenuItem.separator())
@@ -33,7 +31,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self.checkState()
             self.updateTimeRemaining()
         }
-        updateTimeRemaining() // update immediately on launch
+        updateTimeRemaining()
     }
     
     func checkState() {
@@ -50,11 +48,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func updateIcon() {
         if let button = statusItem.button {
-            if isStanding {
-                button.image = NSImage(systemSymbolName: "figure.stand", accessibilityDescription: "Stand")
-            } else {
-                button.image = NSImage(systemSymbolName: "chair", accessibilityDescription: "Sit")
-            }
+            button.image = NSImage(systemSymbolName: isStanding ? "figure.stand" : "chair",
+                                    accessibilityDescription: isStanding ? "Stand" : "Sit")
         }
     }
     
@@ -62,13 +57,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let now = Date()
         let elapsed = now.timeIntervalSince(lastChange)
         let duration = isStanding ? standDuration : sitDuration
-        let remaining = max(0, Int(duration - elapsed))
+        let remainingSeconds = max(0, Int(duration - elapsed))
         
-        let minutes = remaining / 60
-        let seconds = remaining % 60
+        let remainingText: String
+        if remainingSeconds >= 3600 {
+            let hours = remainingSeconds / 3600
+            remainingText = hours == 1 ? "1 hour" : "\(hours) hours"
+        } else {
+            let minutes = max(1, remainingSeconds / 60) // round up to at least 1 minute
+            remainingText = minutes == 1 ? "1 minute" : "\(minutes) minutes"
+        }
+        
         let phase = isStanding ? "Standing" : "Sitting"
-        
-        timeRemainingItem.title = "Time Remaining (\(phase)): \(String(format: "%02d:%02d", minutes, seconds))"
+        timeRemainingItem.title = "Time Remaining (\(phase)): \(remainingText)"
     }
     
     @objc func quitApp() {
